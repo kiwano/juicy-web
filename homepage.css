@@ -1,0 +1,92 @@
+body
+{
+  font-family: monospace;
+  text-decoration: none;
+  background-color: black;
+  color: #dddddd;
+}
+
+a
+{
+  font-family: monospace;
+  text-decoration: none;
+  background-color: black;
+  color: #00ff00;
+}
+
+h3
+{
+  font-family: monospace;
+  font-size: medium;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: black;
+  color: #ffffff;
+}
+
+h4
+{
+  font-family: monospace;
+  font-size: medium;
+  text-decoration: none;
+  background-color: black;
+  color: #ffffff;
+}
+
+
+select
+{
+  font-family: monospace;
+  font-size: medium;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: black;
+  color: #00ff00;
+  border: solid 0 black;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input.search
+{
+  font-family: monospace;
+  text-decoration: none;
+  background-color: #333333;
+  color: #dddddd;
+  border: solid 0 black;
+}
+
+input.destroy
+{
+  font-family: monospace;
+  font-size: medium;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: black;
+  color: #00ff00;
+  border: solid 0 black;
+}
+
+#toolbar
+{
+  text-align: center;
+  font-weight: bold;
+  height:38px;
+}
+
+#sidebar
+{
+  position: absolute;
+  left:1%;
+  top:40px;
+  width:15%;
+}
+
+#meat
+{
+  position: absolute;
+  right:2%;
+  top:40px;
+  width:82%;
+}
