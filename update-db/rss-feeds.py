@@ -27,20 +27,20 @@ def save_feed_item(name, timestamp, feed_title, feed_url, item_title, item_url):
   )
   session.execute(iq)
   print("adding:", item_title.encode("utf-8"), item_url.encode("utf-8"), "to", name)
+  session.commit()
 
 
 # Return how many rows already exist, and look like the specified item
 
-def test_similar_rows(data_table, name, title, url):
+def test_similar_rows(data_table, name, url):
   sq = data_table.select().where(
     and_(
       data_table.c.name == name,
-      data_table.c.item_title == title,
       data_table.c.item_url == url
     )
   )
   matches = session.execute(sq)
-  return matches.rowcount
+  return len(matches.fetchall())
 
 
 def process_feed_items(data_table, name, title, url, time, items):
@@ -55,9 +55,10 @@ def process_feed_items(data_table, name, title, url, time, items):
     else:
       item_timestamp = time
 
-    if "link" in item and "title" in item:
-      if (test_similar_rows(data_table, name, item["title"], item["link"]) == 0):
-        save_feed_item(name, item_timestamp, title, url, item["title"], item["link"])
+    if "link" in item:
+      item_title = item.get("title") or item_timestamp.strftime("%Y-%m-%d %H:%M")
+      if (test_similar_rows(data_table, name, item["link"]) == 0):
+        save_feed_item(name, item_timestamp, title, url, item_title, item["link"])
     else:
       print("Malformed RSS item received:")
       print(item)
@@ -97,7 +98,7 @@ def check_bozo_feed(feedupdate):
     #print('found feed item')
     if 'title' in feedupdate.feed:
       #print('feed item has title object:', feedupdate.feed['title'])
-      foo = 1
+      pass
     else:
       #print('feed item has no title object; bozo is fatal')
       return 0
@@ -107,13 +108,13 @@ def check_bozo_feed(feedupdate):
         #print('there are', len(feedupdate.feed["links"]), 'links')
         if 'href' in feedupdate.feed["links"][0]:
           #print('feed has an url', feedupdate.feed["links"][0]["href"])
-          foo = 1
+          pass
         else:
           #print('feed has no url; bozo is fatal')
           return 0
       else:
         #print('feed item links object has zero length; bozo is fatal')
-        foo = 1
+        pass
     else:
       #print('feed has no links; bozo is fatal')
       return 0
@@ -123,7 +124,7 @@ def check_bozo_feed(feedupdate):
   # testing shows that there appear to always be entires in the feed
   if 'items' in feedupdate:
     #print('found entries in feed')
-    foo = 1
+    pass
   else:
     #print('feed has no entries; bozo is fatal')
     return 0
@@ -155,28 +156,23 @@ db_engine = create_engine(config.db)
 Session = sessionmaker(bind=db_engine)
 session = Session()
 metadata = MetaData()
-metadata.create_all(db_engine)
 metadata.reflect(db_engine)
 
-daemon = True
-while daemon:
-  # Make a note in the log
-  currtime = datetime.now()
-  #print("Checking RSS feeds for updates at", currtime)
-  # (Re)load the tables
+# Make a note in the log
+currtime = datetime.now()
+#print("Checking RSS feeds for updates at", currtime)
+# (Re)load the tables
 
-  feed_table = Table('rss_feeds', metadata, autoload_with=db_engine)
-  data_table = Table('rss_data', metadata, autoload_with=db_engine)
+feed_table = Table('rss_feeds', metadata, autoload_with=db_engine)
+data_table = Table('rss_data', metadata, autoload_with=db_engine)
 
-  # Get the feeds from the feed table
+# Get the feeds from the feed table
 
-  fq = feed_table.select()
-  feeds = session.execute(fq)
+fq = feed_table.select()
+feeds = session.execute(fq)
 
-  # Process the feeds from the table
+# Process the feeds from the table
 
-  for feed in feeds.mappings():
-    process_feed(feed, data_table)
+for feed in feeds.mappings():
+  process_feed(feed, data_table)
 
-  daemon = False
-  #sleep(300)

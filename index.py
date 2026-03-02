@@ -1,16 +1,10 @@
 #!/usr/bin/python3
 import cgitb
-import codecs
 import config
 from rss_display import *
 from weather_display import *
 from bookmarks import *
 from urllib.parse import quote_plus
-
-
-# Sets output encoding to utf-8, and enables cgitb
-def init_cgi():
-  cgitb.enable()
 
 
 # Prints the page header
@@ -120,7 +114,7 @@ def footer():
            </html>''')
 
 
-init_cgi()
+cgitb.enable()
 page_header()
 print('<body>')
 toolbar()
