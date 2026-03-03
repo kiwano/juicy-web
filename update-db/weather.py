@@ -10,6 +10,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
 from urllib.request import urlopen, urlcleanup
 import re
+import config
 
 
 #### Functions
@@ -219,7 +220,7 @@ def update_fpcn(fpcns, table, year, month, day):
 
 # Initialize the db connection
 
-db_engine = create_engine(db.config)
+db_engine = create_engine(config.db)
 Session = sessionmaker(bind=db_engine)
 session = Session()
 metadata = MetaData()
